@@ -22,13 +22,15 @@ The following architechtural diagram explains the high level architecture of ser
 
 The first step is the gandalf app that is written in Python. The framework used is Flask because it is easy to use when dealing with small web applications. Since this application has three endpoints only, flask is good.
 
-#### 1. The flask app has three endpoints. The first endpoint is "/gandalf" this shows an image of gandalf. When a user accesses this endpoint, an increment of 1 is added into a variable that will be used as a metric by Prometheus. http://4.232.114.218/gandalf
+1. The flask app has three endpoints. The first endpoint is "/gandalf" this shows an image of gandalf. When a user accesses this endpoint, an increment of 1 is added into a variable that will be used as a metric by Prometheus. http://4.232.114.218/gandalf
 
-#### 2. The second endpoint "/colombo" shows the time in colombo standard time. Accessing it also adds and increment in a variable in the app for metrics. http://4.232.114.218/colombo
+2. The second endpoint "/colombo" shows the time in colombo standard time. Accessing it also adds and increment in a variable in the app for metrics. http://4.232.114.218/colombo
 
-#### 3. The third endpoint shows the metrices themselves. In this app, the endpoint "/metrics" is primarity open for Prometheus to scrape metrics from this application and show them in the Prometheus UI. The prometheus server is installed in another cloud provider and another VM. http://4.232.114.218/metrics
+3. The third endpoint shows the metrices themselves. In this app, the endpoint "/metrics" is primarity open for Prometheus to scrape metrics from this application and show them in the Prometheus UI. The prometheus server is installed in another cloud provider and another VM. http://4.232.114.218/metrics
 
-The code can be found [here](https://github.com/samishafique786/observability-w-prometheus/blob/main/pyapp/app.py).
+The code can be found [here](https://github.com/samishafique786/observability-w-prometheus/blob/main/pyapp/app.py). 
+
+The application then has to be containerized, so that it can run in a pod in a Kubernetes cluster. To do that, a [Dockerfile](https://github.com/samishafique786/observability-w-prometheus/blob/main/pyapp/Dockerfile)has been created that runs the app and opens the port 80 for HTTP requests.
 
 ### AKS Cluster
 
