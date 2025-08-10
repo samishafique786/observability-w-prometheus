@@ -32,11 +32,38 @@ The code can be found [here](https://github.com/samishafique786/observability-w-
 
 The application then has to be containerized, so that it can run in a pod in a Kubernetes cluster. To do that, a [Dockerfile](https://github.com/samishafique786/observability-w-prometheus/blob/main/pyapp/Dockerfile)has been created that runs the app and opens the port 80 for HTTP requests.
 
-### AKS Cluster
+### Azure Kubernetes Service
+
+To run this application that we have containerized in a Kubernetes cluster, Azure Kubernetes Service has been chosen. The reason for this choice is that I have credits given to me by my university.
+
+Since my Azure account is managed by the university, I have permissions to create recourses mostly in the EU regions of Azure. So, for provisioning the cluster, the Italy-north region has been selected. (This is important for later when the static IP provisioning takes place.) 
+
+#### 1. Resource Group
+
+Before creating any resource (VM, Storage, Clusters, IP addresses) in Azure, a resource group must be created. A resource group is ideally where all the resources about an application should be created. My Resource group is called** MyStudentRG** - this is where all the resources related to my cluster will be. 
+
+#### 2. AKS Cluster
+
+Using the same Azure  UI, a kubernetes cluster has been created in the Italy-north region. This is a managed Kuberenets cluster, which means that we as customers are billed only for the worker nodes. In our case, the minimum amount of working nodes is 1, but during the provisioning of the cluster, we have allowed autoscaling to scale the node pool to 20 nodes.
+
+The cluster is named **gandalf-az-cluster**. After the creation of the cluster, we need to configure the CLI (local terminal) to run **az** and **kubectl** commands. The Azure CLI has been downloaded using the Microsoft Installed (MSI) and to configure the Azure account, the folllowing commands have been used. 
+
+```bash
+az login
+```
+This will open a web browser where you autheticate with the Azure account. 
+
+```bash
+az az account set --subscription <xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>
+```
+Choose the correct subscription. My account has two subscriptions, one of them is given to me by the university with some credits I can use. 
+
+```bash
+az aks get-credentials --resource-group MyStudentRG --name gandalf-az-cluster --overwrite-existing
+```
+This will download the KubeConfig file - this authenticates the terminal with the K8s cluster, and now we can run kubectl commands.
 
 
-
-
-## Infrastrucutre Provisioning
+## Infrastructure Provisioning
 
 The application has been deployed in an AKS cluster in Microsoft Azure cloud - region: italy-north. The observability server has been deployed in the CSC Cloud in Finland - region: Kajaani, Finland. At first, the application 
