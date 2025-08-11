@@ -42,7 +42,7 @@ Since my Azure account is managed by the university, I have permissions to creat
 
 Before creating any resource (VM, Storage, Clusters, IP addresses) in Azure, a resource group must be created. A resource group is ideally where all the resources about an application should be created. My Resource group is called** MyStudentRG** - this is where all the resources related to my cluster will be. 
 
-#### 2. AKS Cluster
+#### 2. AKS Cluster Creation and Setting Up Things 
 
 Using the same Azure  UI, a kubernetes cluster has been created in the Italy-north region. This is a managed Kuberenets cluster, which means that we as customers are billed only for the worker nodes. In our case, the minimum amount of working nodes is 1, but during the provisioning of the cluster, we have allowed autoscaling to scale the node pool to 20 nodes.
 
@@ -51,7 +51,7 @@ The cluster is named **gandalf-az-cluster**. After the creation of the cluster, 
 ```bash
 az login
 ```
-This will open a web browser where you autheticate with the Azure account. 
+This will open a web browser where you authenticate with the Azure account. 
 
 ```bash
 az az account set --subscription <xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>
@@ -62,6 +62,8 @@ Choose the correct subscription. My account has two subscriptions, one of them i
 az aks get-credentials --resource-group MyStudentRG --name gandalf-az-cluster --overwrite-existing
 ```
 This will download the KubeConfig file - this authenticates the terminal with the K8s cluster, and now we can run kubectl commands.
+
+
 
 
 ## Infrastructure Provisioning
