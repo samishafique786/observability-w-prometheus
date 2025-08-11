@@ -135,6 +135,15 @@ We do know our cluster name and RG name, but the nodeResourceGroup is unknown, s
 ```bash
 az aks show --name gandalf-az-cluster --resource-group MyStudentRG --query nodeResourceGroup -o tsv
 ```
+After finding your nodeResourseGroup name, run this commands to finally create a static public IP.
+```bash
+az network public-ip create \
+    --resource-group <node resource group name> \
+    --name myAKSPublicIP \
+    --sku Standard \
+    --allocation-method static
+```
+
 ## Infrastructure Provisioning
 
 The application has been deployed in an AKS cluster in Microsoft Azure cloud - region: italy-north. The observability server has been deployed in the CSC Cloud in Finland - region: Kajaani, Finland. At first, the application 
