@@ -124,7 +124,17 @@ spec:
       imagePullSecrets:
       - name: gitlab-registry-secret
 ```
+```bash
+kubectl apply -f Deployment.yaml
+```
+This will create a deployment named my-app, and a pod will start running with the Gandlalf container image we uploaded to the container registry. Now, the port 80 is exposed, but K8s needs a **Service** for networing and to expose the application to the outside world, we will use a Service type of **LoadBalancer**. However, a simple loadbalancer service uses a dynamic IP to expose the application, but in our case, the application will be monitored via Prometheus, and for that, a static IP is needed so that Prometheus can keep monitoring. 
 
+So, we now create a static IP in Azure using a service called Public IP addresses. Since there are restrictions as to region of cluster being Italy-north, AKS uses an address that should be in the same resource group, and the region as well. So, using the Azure CLI (az), lets create the IP. 
+
+We do know our cluster name and RG name, but the nodeResourceGroup is unknown, so let find out. 
+```bash
+az aks show --name gandalf-az-cluster --resource-group MyStudentRG --query nodeResourceGroup -o tsv
+```
 ## Infrastructure Provisioning
 
 The application has been deployed in an AKS cluster in Microsoft Azure cloud - region: italy-north. The observability server has been deployed in the CSC Cloud in Finland - region: Kajaani, Finland. At first, the application 
