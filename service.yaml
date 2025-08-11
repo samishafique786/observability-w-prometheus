@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: MC_MyStudentRG_gandalf-az-cluster_italynorth
+    service.beta.kubernetes.io/azure-pip-name: myAKSPublicIP
+  name: azure-load-balancer
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: my-app
