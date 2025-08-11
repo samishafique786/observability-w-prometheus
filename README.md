@@ -37,17 +37,17 @@ The application then has to be containerized, so that it can run in a pod in a K
 Now that the gandalf app is containerized, it needs to be uploaded to a container registry. In this case, the Gitlab container registry has been chosen because I have fimiliarity with it, and no diffuclut setup is required. In the terminal, run the following commands **in order** to build and push the image to the GitLab container registry.
 
 ```bash
-docker login registry.gitlab.com -u <GITLAB_USERNAME> -p <GITLAB_PERSONAL_ACCESS_TOKEN>
+docker login registry.gitlab.com -u samishafique786 -p <GITLAB_PERSONAL_ACCESS_TOKEN>
 ```
 The personal access token is important and should be saved for later use when authenticating K8s with the container registry.
 ```bash
-docker build -t registry.gitlab.com/<PROJECT_PATH>/<IMAGE_NAME>:<TAG> .
+docker build -t registry.gitlab.com/csc-rahti-group/gandalf-project:v1 .
 ```
 Give the path of your gitlab project, give a name, and a tag. 
 
 Finally, push the image to the container registry:
 ```bash
-docker push registry.gitlab.com/<PROJECT_PATH>/<IMAGE_NAME>:<TAG>
+docker push registry.gitlab.com/csc-rahti-group/gandalf-project:v1
 ```
 
 
