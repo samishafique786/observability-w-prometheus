@@ -188,7 +188,13 @@ Monitoring of the exposed endpoint at http://72.146.20.152/metrics will be done 
 
 ### Terraform
 
-Terraform uses HCL language to write the infrastructure in a declarative manner, so that the Infra can be provisioned again and again without mistakes. This is called Idempotency. The following HCL Code has been used to provision a VM with ports 22 and 9090 open in CSC.fi cloud. The provider in this case is OpenStack. 
+Terraform uses HCL language to write the infrastructure in a declarative manner, so that the Infra can be provisioned again and again without mistakes. This is called Idempotency. The following HCL Code has been used to provision a VM with ports 22 and 9090 open in CSC.fi cloud. The provider in this case is OpenStack.
+
+The following Terraform code has been used to provision the VM with port 22 (SSH) and 9090 (Prometheus) open. The same terraform code assigns a Floating IP (Public IP) to the VM which we use to SSH and scrape http metrics later. The Terraform Code: https://github.com/samishafique786/observability-w-prometheus/blob/main/main.tf
+
+After successful provisioning, the VM needs be to configured via a configuration management system, we use Ansible for that. So, Let's set up Ansible with this VM:
+
+
 
 
 The application has been deployed in an AKS cluster in Microsoft Azure cloud - region: italy-north. The observability server has been deployed in the CSC Cloud in Finland - region: Kajaani, Finland. At first, the application 
