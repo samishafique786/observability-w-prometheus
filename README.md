@@ -32,6 +32,27 @@ The code can be found [here](https://github.com/samishafique786/observability-w-
 
 The application then has to be containerized, so that it can run in a pod in a Kubernetes cluster. To do that, a [Dockerfile](https://github.com/samishafique786/observability-w-prometheus/blob/main/pyapp/Dockerfile)has been created that runs the app and opens the port 80 for HTTP requests.
 
+#### Gandalf Image and GitLab Container Registry
+
+Now that the gandalf app is containerized, it needs to be uploaded to a container registry. In this case, the Gitlab container registry has been chosen because I have fimiliarity with it, and no diffuclut setup is required. In the terminal, run the following commands **in order** to build and push the image to the GitLab container registry.
+
+```bash
+docker login registry.gitlab.com -u <GITLAB_USERNAME> -p <GITLAB_PERSONAL_ACCESS_TOKEN>
+```
+The personal access token is important and should be saved for later use when authenticating K8s with the container registry.
+```bash
+docker build -t registry.gitlab.com/<PROJECT_PATH>/<IMAGE_NAME>:<TAG> .
+```
+Give the path of your gitlab project, give a name, and a tag. 
+
+Finally, push the image to the container registry:
+```bash
+docker push registry.gitlab.com/<PROJECT_PATH>/<IMAGE_NAME>:<TAG>
+```
+
+
+
+
 ### Azure Kubernetes Service
 
 To run this application that we have containerized in a Kubernetes cluster, Azure Kubernetes Service has been chosen. The reason for this choice is that I have credits given to me by my university.
