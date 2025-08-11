@@ -194,6 +194,140 @@ The following Terraform code has been used to provision the VM with port 22 (SSH
 
 After successful provisioning, the VM needs be to configured via a configuration management system, we use Ansible for that. So, Let's set up Ansible with this VM:
 
+The Ip address of the VM created via Terraform is 86.50.228.253, so, this needs to be saved in the ansible inventory. This is the Ansible inventory.ini:
+```bash
+[prometheus]
+128.214.254.165 ansible_user=ubuntu ansible_ssh_private_key_file=../../../Downloads/grafanavm.pem
+```
+After that, Ansible is ready to connect to the VM and run playbooks.
+
+After carefully troubleshooting some parts, the following playbook has been used to install Prometheus and set up things (In some parts of this playbook, AI was used): 
+
+```bash
+---
+- name: Install and configure Prometheus
+  hosts: all
+  become: yes
+
+  vars:
+    prometheus_version: 2.53.0
+    prometheus_user: prometheus
+    prometheus_group: prometheus
+    prometheus_install_dir: /opt
+    prometheus_data_dir: /var/lib/prometheus
+    prometheus_config_dir: /etc/prometheus
+    prometheus_tar: "prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+    prometheus_url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/{{ prometheus_tar }}"
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install dependencies
+      apt:
+        name: [wget, tar]
+        state: present
+
+    - name: Create prometheus user
+      user:
+        name: "{{ prometheus_user }}"
+        system: yes
+        shell: /sbin/nologin
+
+    - name: Download Prometheus
+      get_url:
+        url: "{{ prometheus_url }}"
+        dest: "/tmp/{{ prometheus_tar }}"
+
+    - name: Extract Prometheus
+      unarchive:
+        src: "/tmp/{{ prometheus_tar }}"
+        dest: "{{ prometheus_install_dir }}"
+        remote_src: yes
+
+    - name: Move Prometheus binary
+      copy:
+        src: "{{ prometheus_install_dir }}/prometheus-{{ prometheus_version }}.linux-amd64/prometheus"
+        dest: /usr/local/bin/prometheus
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_group }}"
+        mode: '0755'
+        remote_src: yes
+
+    - name: Move Promtool binary
+      copy:
+        src: "{{ prometheus_install_dir }}/prometheus-{{ prometheus_version }}.linux-amd64/promtool"
+        dest: /usr/local/bin/promtool
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_group }}"
+        mode: '0755'
+        remote_src: yes
+
+    - name: Create Prometheus directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_group }}"
+        mode: '0755'
+      loop:
+        - "{{ prometheus_config_dir }}"
+        - "{{ prometheus_data_dir }}"
+
+    - name: Copy local prometheus.yml
+      copy:
+        src: ./prometheus.yml
+        dest: "{{ prometheus_config_dir }}/prometheus.yml"
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_group }}"
+        mode: '0644'
+
+    - name: Create systemd service for Prometheus
+      copy:
+        dest: /etc/systemd/system/prometheus.service
+        content: |
+          [Unit]
+          Description=Prometheus Monitoring
+          Wants=network-online.target
+          After=network-online.target
+
+          [Service]
+          User={{ prometheus_user }}
+          Group={{ prometheus_group }}
+          ExecStart=/usr/local/bin/prometheus \
+            --config.file={{ prometheus_config_dir }}/prometheus.yml \
+            --storage.tsdb.path={{ prometheus_data_dir }} \
+            --web.console.templates={{ prometheus_install_dir }}/prometheus-{{ prometheus_version }}.linux-amd64/consoles \
+            --web.console.libraries={{ prometheus_install_dir }}/prometheus-{{ prometheus_version }}.linux-amd64/console_libraries
+
+          [Install]
+          WantedBy=multi-user.target
+      notify:
+        - Reload systemd
+
+    - name: Enable and start Prometheus
+      systemd:
+        name: prometheus
+        enabled: yes
+        state: started
+
+  handlers:
+    - name: Reload systemd
+      command: systemctl daemon-reload
+```
+
+```bash
+ansible-playbook -i inventory.ini install_prometheus.yml
+```
+
+After installing this playbook, the following UI can be accessed with going to the following link: http://86.50.228.253:9090/targets
+
+<img width="2924" height="960" alt="image" src="https://github.com/user-attachments/assets/561dcc96-9d29-4e82-9331-9add4f61ac22" />
+The target endpoint is now being scraped by Prometheus: http://72.146.20.152/metrics
+
+
+
 
 
 
