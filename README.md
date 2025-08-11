@@ -327,8 +327,11 @@ After installing this playbook, the following UI can be accessed with going to t
 The target endpoint is now being scraped by Prometheus: http://72.146.20.152/metrics
 
 
+After this, querying gandalf and colombo will show the graphs in Prometheus:
+
+<img width="2918" height="1498" alt="image" src="https://github.com/user-attachments/assets/57b7b3a4-a778-469a-a714-d9809701fd11" />
+
+<img width="2932" height="1366" alt="image" src="https://github.com/user-attachments/assets/1760cbaa-992d-4c3e-94be-d4e9b7b41bb0" />
 
 
-
-
-The application has been deployed in an AKS cluster in Microsoft Azure cloud - region: italy-north. The observability server has been deployed in the CSC Cloud in Finland - region: Kajaani, Finland. At first, the application 
+The application has been deployed in an AKS cluster in Microsoft Azure cloud - region: italy-north. The observability server has been deployed in the CSC Cloud in Finland - region: Kajaani, Finland.
