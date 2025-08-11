@@ -180,7 +180,7 @@ spec:
 ```bash
 kubectl apply -f Service.yaml
 ```
-This will expose the app using the static Ip of http://72.146.20.152/
+This will expose the app using the static Ip of http://72.146.20.152/gandalf
 
 ## Infrastructure Provisioning
 
