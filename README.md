@@ -153,7 +153,7 @@ az aks show --name gandalf-az-cluster --resource-group MyStudentRG --query ident
 ```
 In my case, the role is systemAssigned, so, this role needs permissions as a Network Contributer, so that this role can patch the Public IP to our deployment, otherwise, the Service in K8s will be pending due to less permissions. 
 
-After carefully reading the [Official microsoft documentation]([url](https://learn.microsoft.com/en-us/azure/aks/static-ip)) on this matter, the following command does that:
+After carefully reading the Official microsoft [documentation]([url](https://learn.microsoft.com/en-us/azure/aks/static-ip)) on this matter, the following command does that:
 ```bash
 az role assignment create \
     --assignee ${CLIENT_ID} \
