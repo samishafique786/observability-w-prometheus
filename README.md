@@ -99,6 +99,32 @@ Deploying the App
 
 There were two ways of deploying the application. One via K8s commands and flags, the other way is using YAML files. YAML files are good because they can be version controlled. We chose a mixture of YAML and commands. The first file is deployment.yaml which contains the name of the application, type of kubernetes object which is deployment, number of replicas needed of the app, the port to expose, and the imagePullSecrets.  
 
+Deployment.yaml
+
+```bash
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: registry.gitlab.com/csc-rahti-group/gandalf-project:v1
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: gitlab-registry-secret
+```
+
 ## Infrastructure Provisioning
 
 The application has been deployed in an AKS cluster in Microsoft Azure cloud - region: italy-north. The observability server has been deployed in the CSC Cloud in Finland - region: Kajaani, Finland. At first, the application 
