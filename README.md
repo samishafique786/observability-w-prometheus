@@ -182,6 +182,13 @@ kubectl apply -f Service.yaml
 ```
 This will expose the app using the static Ip of http://72.146.20.152/gandalf
 
-## Infrastructure Provisioning
+## Monitoring Infrastructure Provisioning
+
+Monitoring of the exposed endpoint at http://72.146.20.152/metrics will be done via Prometheus. The Prometheus infrastructure will be provisioned via Terraform for provisioning the VM with Infrastructure as Code (IaC), and the configuration will be managed via Ansible. 
+
+### Terraform
+
+Terraform uses HCL language to write the infrastructure in a declarative manner, so that the Infra can be provisioned again and again without mistakes. This is called Idempotency. The following HCL Code has been used to provision a VM with ports 22 and 9090 open in CSC.fi cloud. The provider in this case is OpenStack. 
+
 
 The application has been deployed in an AKS cluster in Microsoft Azure cloud - region: italy-north. The observability server has been deployed in the CSC Cloud in Finland - region: Kajaani, Finland. At first, the application 
