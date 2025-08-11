@@ -84,8 +84,20 @@ az aks get-credentials --resource-group MyStudentRG --name gandalf-az-cluster --
 ```
 This will download the KubeConfig file - this authenticates the terminal with the K8s cluster, and now we can run kubectl commands.
 
+Now, in order to pull the image for running in our cluster, the cluster needs to authenticate to the GitLab container registry. For that, Kubernetes uses **Secrets**. The GitLab container registry authentication token with at least read permissions should be saved as a secret in our cluster. So, let's create this secret. 
 
+```bash
+kubectl create secret docker-registry gitlab-registry-secret \
+  --docker-server=registry.gitlab.com \
+  --docker-username=samishafique786 \
+  --docker-password=<your-personal-access-token-or-deploy-token> \
+  --docker-email=samishafique786@gmail.com
+```
+This will create a secret in K8s cluster that can authenticate with the registry for pulling images.
 
+Deploying the App
+
+There were two ways of deploying the application. One via K8s commands and flags, the other way is using YAML files. YAML files are good because they can be version controlled. We chose a mixture of YAML and commands. The first file is deployment.yaml which contains the name of the application, type of kubernetes object which is deployment, number of replicas needed of the app, the port to expose, and the imagePullSecrets.  
 
 ## Infrastructure Provisioning
 
