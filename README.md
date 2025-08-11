@@ -143,6 +143,44 @@ az network public-ip create \
     --sku Standard \
     --allocation-method static
 ```
+Get the static public IP address value:
+```bash
+az network public-ip show --resource-group <node resource group name> --name myAKSPublicIP --query ipAddress --output tsv
+```
+Check the AKS cluster identity type (to determine permissions setup)
+```bash
+az aks show --name gandalf-az-cluster --resource-group MyStudentRG --query identity.type --output tsv
+```
+In my case, the role is systemAssigned, so, this role needs permissions as a Network Contributer, so that this role can patch the Public IP to our deployment, otherwise, the Service in K8s will be pending due to less permissions. 
+
+After carefully reading the [Official microsoft documentation]([url](https://learn.microsoft.com/en-us/azure/aks/static-ip)) on this matter, the following command does that:
+```bash
+az role assignment create \
+    --assignee ${CLIENT_ID} \
+    --role "Network Contributor" \
+    --scope ${RG_SCOPE}
+```
+The ENV variables should be first saved according to the said MS documentation. After running this command, we are set to expose our deployment (gandalf-app) on port 80 using the static IP we created by using a LoadBalancer service. Remember, the name of our static IP resource is MyAKSPublicIP, so we will be refering this name in our Service.yaml file.
+
+```bash
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: MC_MyStudentRG_gandalf-az-cluster_italynorth
+    service.beta.kubernetes.io/azure-pip-name: myAKSPublicIP
+  name: azure-load-balancer
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: my-app
+```
+```bash
+kubectl apply -f Service.yaml
+```
+This will expose the app using the static Ip of http://72.146.20.152/
 
 ## Infrastructure Provisioning
 
